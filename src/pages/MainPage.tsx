@@ -1,9 +1,32 @@
-import { Col, Container, Row } from 'react-bootstrap';
+import { useState } from 'react';
+import { Container } from 'react-bootstrap';
 import { RxAvatar } from 'react-icons/rx';
 import { postAPI } from '../services/PostsService';
+import { useNavigate } from 'react-router-dom';
+import ModalWindow from '../components/ModalWindow';
+import { useAppDispatch, useAppSelector } from '../utils/hooks';
+import { setCurrentPost } from '../store/slices/PostSlice';
+import { commentAPI } from '../services/CommentService';
+import PostItem from '../components/PostItem';
 
 const MainPage = () => {
+	const postId = useAppSelector((state) => state.postReducer.postId);
+	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
+
 	const { data: posts } = postAPI.useGetAllPostsQuery('');
+	const { data: comments } = commentAPI.useGetCommentByIdQuery(postId);
+
+	const [modalShow, setModalShow] = useState(false);
+
+	const handleOpenModal = (postId: number) => {
+		setModalShow(true);
+		dispatch(setCurrentPost(postId));
+	};
+
+	const handleNavigate = (userId: number) => {
+		navigate(`/user/${userId}`);
+	};
 
 	return (
 		<Container
@@ -16,26 +39,20 @@ const MainPage = () => {
 		>
 			{posts &&
 				posts.map((item) => (
-					<Row
-						style={{
-							padding: '5px',
-							border: '1px solid #bababa',
-							borderRadius: '10px',
-							boxShadow: '5px 5px 5px #cccccc5b',
-						}}
-					>
-						<Col xs={10}>
-							<h4>{item.title}</h4>
-							<div>{item.body}</div>
-						</Col>
-						<Col>
-							<div>
-								<RxAvatar />
-							</div>
-							<div>Комментарии</div>
-						</Col>
-					</Row>
+					<PostItem
+						key={item.id}
+						item={item}
+						avatar={<RxAvatar />}
+						handleNavigate={handleNavigate}
+						handleOpenModal={handleOpenModal}
+						withSide
+					/>
 				))}
+			<ModalWindow
+				show={modalShow}
+				onHide={() => setModalShow(false)}
+				comments={comments}
+			/>
 		</Container>
 	);
 };

@@ -13,10 +13,10 @@ export const postAPI = createApi({
 			}),
 		}),
 		getPostById: build.query<PostsResponse, number>({
-			query: (id) => ({
+			query: (userId) => ({
 				url: `/posts`,
 				params: {
-					userId: id,
+					userId: userId,
 				},
 			}),
 		}),
