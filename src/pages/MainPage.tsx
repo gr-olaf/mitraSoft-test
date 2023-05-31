@@ -4,18 +4,21 @@ import { RxAvatar } from 'react-icons/rx';
 import { postAPI } from '../services/PostsService';
 import { useNavigate } from 'react-router-dom';
 import ModalWindow from '../components/ModalWindow';
-import { useAppDispatch, useAppSelector } from '../utils/hooks';
+import { useAppDispatch, useAppSelector } from '../utils/hooks/redux';
 import { setCurrentPost } from '../store/slices/PostSlice';
 import { commentAPI } from '../services/CommentService';
 import PostItem from '../components/PostItem';
+import SpinnerComponent from '../components/SpinnerComponent';
 
 const MainPage = () => {
 	const postId = useAppSelector((state) => state.postReducer.postId);
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 
-	const { data: posts } = postAPI.useGetAllPostsQuery('');
-	const { data: comments } = commentAPI.useGetCommentByIdQuery(postId);
+	const { data: posts, isLoading: postsIsLoading } =
+		postAPI.useGetAllPostsQuery('');
+	const { data: comments, isLoading: commentsIsLoading } =
+		commentAPI.useGetCommentByIdQuery(postId);
 
 	const [modalShow, setModalShow] = useState(false);
 
@@ -34,24 +37,25 @@ const MainPage = () => {
 				display: 'flex',
 				flexDirection: 'column',
 				gap: '20px',
-				paddingTop: '20px',
+				paddingBlock: '20px',
 			}}
 		>
-			{posts &&
-				posts.map((item) => (
-					<PostItem
-						key={item.id}
-						item={item}
-						avatar={<RxAvatar />}
-						handleNavigate={handleNavigate}
-						handleOpenModal={handleOpenModal}
-						withSide
-					/>
-				))}
+			{postsIsLoading && <SpinnerComponent />}
+			{posts?.map((item) => (
+				<PostItem
+					key={item.id}
+					item={item}
+					avatar={<RxAvatar />}
+					handleNavigate={handleNavigate}
+					handleOpenModal={handleOpenModal}
+					withSide
+				/>
+			))}
 			<ModalWindow
 				show={modalShow}
 				onHide={() => setModalShow(false)}
 				comments={comments}
+				isLoading={commentsIsLoading}
 			/>
 		</Container>
 	);

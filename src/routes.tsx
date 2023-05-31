@@ -12,7 +12,7 @@ export const routes = [
 		Component: <AboutPage />,
 	},
 	{
-		path: '/user' + '/:id',
+		path: '/user' + '/:userId',
 		Component: <UserPage />,
 	},
 ];

@@ -1,11 +1,13 @@
 import { Button, Modal } from 'react-bootstrap';
 import { CommentResponse } from '../models/response/CommentResponse';
 import CommentItem from './CommentItem';
+import SpinnerComponent from './SpinnerComponent';
 
 interface IModalWindow {
 	comments: CommentResponse[] | undefined;
 	show: boolean;
 	onHide: () => void;
+	isLoading: boolean;
 }
 
 const ModalWindow = (props: IModalWindow) => {
@@ -29,6 +31,7 @@ const ModalWindow = (props: IModalWindow) => {
 					paddingInline: '20px',
 				}}
 			>
+				{props.isLoading && <SpinnerComponent />}
 				{props.comments &&
 					props.comments.map((item) => (
 						<CommentItem item={item} key={item.id} />
