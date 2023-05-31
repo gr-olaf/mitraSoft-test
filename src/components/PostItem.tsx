@@ -4,9 +4,9 @@ import { ReactNode } from 'react';
 
 interface IPostItem {
 	item: PostsResponse;
-	avatar: ReactNode;
-	handleNavigate: (userId: number) => void;
-	handleOpenModal: (id: number) => void;
+	avatar?: ReactNode;
+	handleNavigate?: (userId: number) => void;
+	handleOpenModal?: (id: number) => void;
 	withSide?: boolean;
 }
 
@@ -31,7 +31,7 @@ const PostItem = ({
 				<h4>{item.title}</h4>
 				<div>{item.body}</div>
 			</Col>
-			{withSide && (
+			{withSide && handleNavigate && handleOpenModal && (
 				<Col
 					style={{
 						display: 'flex',

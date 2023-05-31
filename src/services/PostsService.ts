@@ -12,7 +12,7 @@ export const postAPI = createApi({
 				url: `/posts`,
 			}),
 		}),
-		getPostById: build.query<PostsResponse, number>({
+		getPostById: build.query<PostsResponse[], number>({
 			query: (userId) => ({
 				url: `/posts`,
 				params: {
