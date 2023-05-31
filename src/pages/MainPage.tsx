@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Container } from 'react-bootstrap';
+import { Button, Container } from 'react-bootstrap';
 import { RxAvatar } from 'react-icons/rx';
 import { postAPI } from '../services/PostsService';
 import { useNavigate } from 'react-router-dom';
@@ -11,12 +11,15 @@ import PostItem from '../components/PostItem';
 import SpinnerComponent from '../components/SpinnerComponent';
 
 const MainPage = () => {
+	const [limit, setLimit] = useState(10);
+
 	const postId = useAppSelector((state) => state.postReducer.postId);
 	const dispatch = useAppDispatch();
+	const search = useAppSelector((state) => state.postReducer.search);
 	const navigate = useNavigate();
 
 	const { data: posts, isLoading: postsIsLoading } =
-		postAPI.useGetAllPostsQuery('');
+		postAPI.useGetAllPostsQuery(limit);
 	const { data: comments, isLoading: commentsIsLoading } =
 		commentAPI.useGetCommentByIdQuery(postId);
 
@@ -41,16 +44,25 @@ const MainPage = () => {
 			}}
 		>
 			{postsIsLoading && <SpinnerComponent />}
-			{posts?.map((item) => (
-				<PostItem
-					key={item.id}
-					item={item}
-					avatar={<RxAvatar />}
-					handleNavigate={handleNavigate}
-					handleOpenModal={handleOpenModal}
-					withSide
-				/>
-			))}
+			{posts
+				?.filter((item) => item.title.includes(search))
+				.map((item) => (
+					<PostItem
+						key={item.id}
+						item={item}
+						avatar={<RxAvatar />}
+						handleNavigate={handleNavigate}
+						handleOpenModal={handleOpenModal}
+						withSide
+					/>
+				))}
+			<Button
+				style={{ alignSelf: 'center' }}
+				variant="outline-secondary"
+				onClick={() => setLimit((prev) => prev + 10)}
+			>
+				Загрузить больше
+			</Button>
 			<ModalWindow
 				show={modalShow}
 				onHide={() => setModalShow(false)}
