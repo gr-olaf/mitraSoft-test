@@ -5,17 +5,23 @@ import UserCard from '../components/UserCard';
 import { postAPI } from '../services/PostsService';
 import PostItem from '../components/PostItem';
 import SpinnerComponent from '../components/SpinnerComponent';
+import AlertComponent from '../components/AlertComponent';
 
 const UserPage = () => {
 	const navigate = useNavigate();
 	const { userId } = useParams();
-	if (!userId) return;
+	if (!userId) return <></>;
 
-	const { data: user, isLoading: userIsLoading } = userAPI.useGetUserByIdQuery(
-		+userId
-	);
-	const { data: posts, isLoading: postsIsLoading } =
-		postAPI.useGetPostByIdQuery(+userId);
+	const {
+		data: user,
+		isLoading: userIsLoading,
+		isError: userIsError,
+	} = userAPI.useGetUserByIdQuery(+userId);
+	const {
+		data: posts,
+		isLoading: postsIsLoading,
+		isError: postsIsError,
+	} = postAPI.useGetPostByIdQuery(+userId);
 
 	const handleNavigateBack = () => {
 		navigate('/');
@@ -37,6 +43,7 @@ const UserPage = () => {
 			>
 				Назад
 			</Button>
+			{userIsError && <AlertComponent />}
 			{userIsLoading && <SpinnerComponent />}
 			{user && <UserCard user={user} />}
 			<Container
@@ -48,6 +55,7 @@ const UserPage = () => {
 				}}
 			>
 				<Row>Посты</Row>
+				{postsIsError && <AlertComponent />}
 				{postsIsLoading && <SpinnerComponent />}
 				{posts?.map((item) => (
 					<PostItem item={item} key={item.id} />

@@ -2,12 +2,14 @@ import { Button, Modal } from 'react-bootstrap';
 import { CommentResponse } from '../models/response/CommentResponse';
 import CommentItem from './CommentItem';
 import SpinnerComponent from './SpinnerComponent';
+import AlertComponent from './AlertComponent';
 
 interface IModalWindow {
 	comments: CommentResponse[] | undefined;
 	show: boolean;
 	onHide: () => void;
 	isLoading: boolean;
+	isError: boolean;
 }
 
 const ModalWindow = (props: IModalWindow) => {
@@ -31,6 +33,7 @@ const ModalWindow = (props: IModalWindow) => {
 					paddingInline: '20px',
 				}}
 			>
+				{props.isError && <AlertComponent />}
 				{props.isLoading && <SpinnerComponent />}
 				{props.comments &&
 					props.comments.map((item) => (
